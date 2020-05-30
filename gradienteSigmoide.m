@@ -7,8 +7,14 @@ g = zeros(size(z));
 % ====================== SU CÓDIGO AQUÍ ======================
 % Instrucciones: Calcula el gradiente de la función sigmoide
 
+% prueba
+% Cuando z = 0, el gradiente debe ser igual a 0.25.
 
 
+% g(z)(1 − g(z))
+% sigmoide(z) = g(z)
+
+g = sigmoid(z) .* (1 - sigmoid(z));
 
 
 

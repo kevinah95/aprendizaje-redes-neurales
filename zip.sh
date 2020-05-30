@@ -1,0 +1,1 @@
+zip 2014092195_Kevin-Hernandez_aprendizaje-redes-neurales.zip funcionDeCostoRN.m gradienteSigmoide.m inicializarPesos.m README.md

@@ -58,7 +58,72 @@ grad_Theta2 = zeros(size(Theta2));
 %                sumársela a grad_Theta1 y grad_Theta2
 %
 
+ % Agrega un columna de unos a la X
+X = [ones(m,1) X]; 
 
+% Salida de la capa de entrada
+for i=1:m 
+    a_hidden(:,i) = sigmoid(Theta1*X(i,:)'); 
+end
+
+a_hidden = [ones(m,1) a_hidden'];
+
+% salida de la capa oculta
+for j=1:m 
+    h_theta(:,j) = sigmoid(Theta2*a_hidden(j,:)'); 
+end
+
+% Inicializar mapeo de y
+yMapped = zeros(num_labels, m);
+
+% Mapea la version no desarrollada de y a una desarrollada
+for k = 1:m
+    yMapped(y(k), k) = 1; 
+end
+
+%tic
+%J = (-yMapped(:)' * log(h_theta(:)) - (1-yMapped(:))' * log(1-h_theta(:)))/m
+%toc
+
+Theta1NoBiasTerm = Theta1(:, 2:end);
+Theta2NoBiasTerm = Theta2(:, 2:end);
+
+%tic
+J = sum(sum(-yMapped .* log(h_theta) - (1-yMapped) .* log(1-h_theta)))/m...
+  + lambda/2/m*(Theta1NoBiasTerm(:)' * Theta1NoBiasTerm(:)... 
+  + Theta2NoBiasTerm(:)' * Theta2NoBiasTerm(:));
+%toc
+
+% -------------------------------------------------------------
+
+% =========================================================================
+
+% Unroll gradients
+grad = [Theta1_grad(:) ; Theta2_grad(:)];
+
+
+% Calcular gradiente por propagación hacia atrás
+
+% Parte 2: calcular delta de la capa de salida
+delta_3 = h_theta - yMapped;
+
+% Parte 3: Calcular delta de la capa oculta
+delta_2 = Theta2'*delta_3;
+delta_2 = delta_2(2:end , :);
+delta_2 = delta_2 .* sigmoidGradient(Theta1*X');
+
+% Parte 4: Compute Delta for every layer
+Delta_1 = delta_2*X;
+Delta_2 = delta_3*a_hidden;
+
+% Parte 5: Calcular la gradiente no regularizada por propagación hacia atrás
+grad = [Delta_1(:); Delta_2(:)]/m;
+
+% Parte 6: Regularizar la gradiente
+Theta1(:,1) = 0;
+Theta2(:,1) = 0;
+grad = [Delta_1(:); Delta_2(:)]/m + lambda*[Theta1(:); Theta2(:)]/m;
+end
 
 
 
